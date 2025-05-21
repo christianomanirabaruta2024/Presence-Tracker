@@ -1,68 +1,48 @@
 package com.upg.employee_management.controller;
-import com.example.employeemanagement.entity.Employee;
-import com.example.employeemanagement.service.EmployeeService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import com.upg.employee_management.dto.AuthRequest;
+import com.upg.employee_management.dto.AuthResponse;
+import com.upg.employee_management.dto.EmployeeDTO;
+import com.upg.employee_management.model.Employee;
+import com.upg.employee_management.service.EmployeeService;
+import com.upg.employee_management.util.JwtUtil;
+import com.upg.employee_management.service.EmployeeDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 public class AuthController {
-    private final EmployeeService employeeService;
-    private final BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-    @Value("${jwt.expiration}")
-    private long jwtExpiration;
+    @Autowired
+    private EmployeeDetailsService employeeDetailsService;
+
+    @Autowired
+    private EmployeeService employeeService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        Employee employee = employeeService.findByEmail(request.getEmail());
-        if (employee != null && passwordEncoder.matches(request.getPassword(), employee.getPassword())) {
-            String token = generateToken(employee);
-            return ResponseEntity.ok(token);
-        }
-        return ResponseEntity.status(401).build();
+    public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
+        );
+        String token = jwtUtil.generateToken(authRequest.getUsername());
+        return ResponseEntity.ok(new AuthResponse(token));
     }
 
-    private String generateToken(Employee employee) {
-        return Jwts.builder()
-                .setSubject(employee.getEmail())
-                .claim("id", employee.getId())
-                .claim("role", employee.getRole().name())
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(SignatureAlgorithm.HS512, jwtSecret)
-                .compact();
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody EmployeeDTO employee) {
+        EmployeeDTO savedEmployee = employeeService.createEmployee(employee);
+        return ResponseEntity.ok("Employee registered: " + savedEmployee.getUsername());
     }
 }
 
-class LoginRequest {
-    private String email;
-    private String password;
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-}

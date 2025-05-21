@@ -1,6 +1,6 @@
 package com.upg.employee_management.repository;
 
-import com.example.employeemanagement.entity.Holiday;
+import com.upg.employee_management.model.Holiday;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
