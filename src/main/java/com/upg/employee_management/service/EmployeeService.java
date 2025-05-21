@@ -54,6 +54,10 @@ public class EmployeeService {
         return employeeRepository.findById(id).map(this::convertToDTO);
     }
 
+    public Employee getEmployeeByUsername(String username) {
+        return employeeRepository.findByUsername(username);
+    }
+
     public EmployeeDTO updateEmployee(Long id, EmployeeDTO employeeDTO) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
@@ -101,4 +105,6 @@ public class EmployeeService {
         dto.setUpdatedAt(employee.getUpdatedAt());
         return dto;
     }
+
+
 }

@@ -1,5 +1,6 @@
 package com.upg.employee_management.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class Employee implements UserDetails {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String passwordHash;
 
     private String avatarUrl;
@@ -83,6 +85,7 @@ public class Employee implements UserDetails {
         return Collections.singletonList(new SimpleGrantedAuthority(authority));
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return passwordHash;
