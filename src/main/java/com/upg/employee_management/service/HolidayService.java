@@ -40,6 +40,20 @@ public class HolidayService {
         return holidayRepository.findById(id).map(this::convertToDTO);
     }
 
+    public boolean deleteHolidayById(Long id) {
+        if (id == null) {
+            return false;
+        }
+
+        try {
+            holidayRepository.deleteById(id);
+            return true;
+        } catch (Exception e) {
+            System.err.println("Failed to delete holiday with ID " + id + ": " + e.getMessage());
+            return false;
+        }
+    }
+
     private HolidayDTO convertToDTO(Holiday holiday) {
         HolidayDTO dto = new HolidayDTO();
         dto.setHolidayId(holiday.getHolidayId());

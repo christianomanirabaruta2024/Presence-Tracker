@@ -4,6 +4,7 @@ import com.upg.employee_management.dto.HolidayDTO;
 import com.upg.employee_management.service.HolidayService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class HolidayController {
     private final HolidayService holidayService;
 
     @PostMapping
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<HolidayDTO> createHoliday(@Valid @RequestBody HolidayDTO holidayDTO) {
         return ResponseEntity.ok(holidayService.createHoliday(holidayDTO));
     }
@@ -33,5 +34,10 @@ public class HolidayController {
         return holidayService.getHolidayById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)  // Default 200 OK
+    public boolean deleteHolidayById(@PathVariable Long id) {
+        return holidayService.deleteHolidayById(id);
     }
 }

@@ -19,9 +19,8 @@ public class HolidayDTO {
     @NotBlank(message = "Type is required")
     private String type;
 
-    @NotNull(message = "Created at is required")
     private LocalDateTime createdAt;
 
-    @NotNull(message = "Updated at is required")
+
     private LocalDateTime updatedAt;
 }

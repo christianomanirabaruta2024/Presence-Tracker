@@ -80,6 +80,7 @@ public class Employee implements UserDetails {
 
     // Spring Security UserDetails implementation
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String authority = isAdmin ? "ROLE_ADMIN" : ("ROLE_" + role);
         return Collections.singletonList(new SimpleGrantedAuthority(authority));
@@ -97,21 +98,25 @@ public class Employee implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

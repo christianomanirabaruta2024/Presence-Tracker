@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -74,6 +76,26 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<Employee> getCurrentEmployee() {
+        // Get authenticated username from SecurityContext
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+
+        // Fetch employee by username
+        Employee employee = employeeService.getEmployeeByUsername(username);
+        if (employee == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(employee);
+    }
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody EmployeeDTO employee) {

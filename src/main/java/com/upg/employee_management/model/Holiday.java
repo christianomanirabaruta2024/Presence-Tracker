@@ -23,10 +23,9 @@ public class Holiday {
     @Column(nullable = false)
     private Type type;
 
-    @Column(nullable = false)
+
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     public enum Type {

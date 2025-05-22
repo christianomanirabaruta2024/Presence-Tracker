@@ -37,14 +37,14 @@ public class AttendanceController {
     }
 
     @PostMapping("/record")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> createAttendanceRecord(@RequestBody AttendanceRecordDTO attendanceRecordDTO) {
         AttendanceRecordDTO savedRecord = attendanceService.createAttendanceRecord(attendanceRecordDTO);
         return ResponseEntity.ok(savedRecord);
     }
 
     @GetMapping("/records")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllAttendanceRecords() {
         List<AttendanceRecordDTO> records = attendanceService.getAllAttendanceRecords();
         return ResponseEntity.ok(records);

@@ -35,7 +35,7 @@ public class LeaveRequestController {
     }
 
     @GetMapping("/requests")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> getAllLeaveRequests() {
         List<LeaveRequestDTO> requests = leaveRequestService.getAllLeaveRequests();
         return ResponseEntity.ok(requests);
